@@ -7,12 +7,7 @@ import (
 )
 
 type MergeRequest struct {
-	URL         string
-	Title       string
-	Description string
-}
-
-type CreateMergeRequestOptions struct {
+	URL          string
 	Title        string
 	Description  string
 	SourceBranch string
@@ -20,22 +15,43 @@ type CreateMergeRequestOptions struct {
 	KeepSource   bool
 }
 
-func (opts *CreateMergeRequestOptions) ParseContent(content string) {
+func (mr *MergeRequest) ParseContent(content string) {
 	splitContent := strings.SplitAfterN(content, "\n", 2)
 
 	if len(splitContent) >= 1 {
-		opts.Title = strings.Trim(splitContent[0], "\n")
+		mr.Title = strings.Trim(splitContent[0], "\n")
 	}
 
 	if len(splitContent) > 1 {
-		opts.Description = strings.Trim(splitContent[1], "\n")
+		mr.Description = strings.Trim(splitContent[1], "\n")
 	}
+}
+
+type CreateMergeRequestOptions struct {
+	Message      string
+	File         string
+	Edit         bool
+	SourceBranch string
+	TargetBranch string
+	KeepSource   bool
+}
+
+func (opts *CreateMergeRequestOptions) MergeRequest() MergeRequest {
+	ret := MergeRequest{
+		SourceBranch: opts.SourceBranch,
+		TargetBranch: opts.TargetBranch,
+		KeepSource:   opts.KeepSource,
+	}
+	ret.ParseContent(opts.Message)
+	return ret
+
 }
 
 type MergeRequestService struct {
 	Git    Git
 	Gitlab Gitlab
 	Editor Editor
+	Reader FileReader
 }
 
 func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) error {
@@ -61,19 +77,30 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 		opts.TargetBranch = project.DefaultBranch
 	}
 
+	if opts.File != "" {
+		content, err := service.Reader.Read(opts.File)
+		if err != nil {
+			return err
+		}
+		opts.Message = content
+	}
+
 	var fileEditor FileEditor
-	if opts.Title == "" {
+
+	if opts.Message == "" || opts.Edit {
 		fileEditor, err = service.edit(opts)
 		if err != nil {
 			return err
 		}
 	}
 
-	if opts.Title == "" {
+	mr := opts.MergeRequest()
+
+	if mr.Title == "" {
 		return errors.New("merge request title is blank")
 	}
 
-	mr, err := service.Gitlab.CreateMergeRequest(remote, opts)
+	err = service.Gitlab.CreateMergeRequest(remote, &mr)
 
 	if err != nil {
 		return err
@@ -89,8 +116,7 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 }
 
 func (service *MergeRequestService) edit(opts *CreateMergeRequestOptions) (FileEditor, error) {
-	msg := fmt.Sprintf("%s\n%s", opts.Title, opts.Description)
-	fileEditor, err := service.Editor.New("MERGE_REQUESTMSG", "merge request", msg)
+	fileEditor, err := service.Editor.New("MERGE_REQUESTMSG", "merge request", opts.Message)
 
 	if err != nil {
 		return fileEditor, err
@@ -105,7 +131,7 @@ func (service *MergeRequestService) edit(opts *CreateMergeRequestOptions) (FileE
 		return fileEditor, err
 	}
 
-	opts.ParseContent(content)
+	opts.Message = content
 
 	return fileEditor, nil
 

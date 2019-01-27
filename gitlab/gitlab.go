@@ -32,7 +32,7 @@ func (g *Gitlab) Project(remote lab.RemoteProject) (project lab.Project, err err
 	return
 }
 
-func (g *Gitlab) CreateMergeRequest(remote lab.RemoteProject, opts *lab.CreateMergeRequestOptions) (lab.MergeRequest, error) {
+func (g *Gitlab) CreateMergeRequest(remote lab.RemoteProject, opts *lab.MergeRequest) error {
 	client := g.getClient(remote)
 
 	removeSource := !opts.KeepSource
@@ -47,14 +47,10 @@ func (g *Gitlab) CreateMergeRequest(remote lab.RemoteProject, opts *lab.CreateMe
 
 	mr, _, err := client.MergeRequests.CreateMergeRequest(remote.Path, &options)
 	if err != nil {
-		return lab.MergeRequest{}, err
+		return err
 	}
 
-	ret := lab.MergeRequest{
-		URL:         mr.WebURL,
-		Title:       mr.Title,
-		Description: mr.Description,
-	}
+	opts.URL = mr.WebURL
 
-	return ret, err
+	return err
 }

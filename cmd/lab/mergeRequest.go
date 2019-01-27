@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/joshbohde/lab"
+	"github.com/joshbohde/lab/file"
 	"github.com/spf13/cobra"
 )
 
@@ -12,6 +13,7 @@ var mergeRequestService = lab.MergeRequestService{
 	Git:    gitService,
 	Gitlab: gitlabService,
 	Editor: editorService,
+	Reader: &file.FileReader{},
 }
 
 var createMergeRequestOptions = lab.CreateMergeRequestOptions{}
@@ -33,10 +35,13 @@ var mergeRequestCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(mergeRequestCmd)
 
-	mergeRequestCmd.Flags().StringVar(&createMergeRequestOptions.Title, "title", "", "The title of the merge request.")
-	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.Description, "description", "d", "", "The description of the merge request.")
+	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.Message, "message", "m", "", "The message of the merge request. The first line is the title, the rest is the description.")
+	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.File, "file", "F", "", "Read the merge request title and description from this file.")
 	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.SourceBranch, "source", "s", "", "The source branch. If not provided, will use your local branch.")
 	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.TargetBranch, "target", "t", "", "The target branch. If not provided, will use the project default.")
 
 	mergeRequestCmd.Flags().BoolVarP(&createMergeRequestOptions.KeepSource, "keep-source", "k", false, "Keep source branch after merging.")
+
+	mergeRequestCmd.Flags().BoolVarP(&createMergeRequestOptions.Edit, "edit", "e", false, "Edit provided message.")
+
 }
