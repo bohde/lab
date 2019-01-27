@@ -11,6 +11,7 @@ import (
 var mergeRequestService = lab.MergeRequestService{
 	Git:    gitService,
 	Gitlab: gitlabService,
+	Editor: editorService,
 }
 
 var createMergeRequestOptions = lab.CreateMergeRequestOptions{}

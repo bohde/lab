@@ -25,7 +25,9 @@ $ go install github.com/joshbohde/lab/cmd/lab
 Opens a merge request from the current branch to the default branch.
 
 ```
-$ lab merge-request --title 'Fixed a bug' --description 'Closes #1'
+$ lab merge-request
 ```
 
-To see a full list of available flags, run `lab merge-request --help`.
+This will open your editor so that you can fill in the title and description of the merge request.
+
+Flags are available for command line scripting. To see a full list of available flags, run `lab merge-request --help`.
