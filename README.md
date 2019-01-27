@@ -22,7 +22,7 @@ $ go install github.com/joshbohde/lab/cmd/lab
 
 ### `issue`
 
-Opens an issue in the current projec.
+Opens an issue in the current project.
 
 ```
 $ lab issue
