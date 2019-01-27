@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joshbohde/lab/editor"
 	git "github.com/joshbohde/lab/git"
 	"github.com/joshbohde/lab/gitlab"
+	"github.com/joshbohde/lab/message"
 	"github.com/spf13/cobra"
 )
 
 var gitService = git.New()
 var gitlabService = gitlab.New()
-var editorService = editor.Editor{}
+var messageService = message.New()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

@@ -54,3 +54,21 @@ func (g *Gitlab) CreateMergeRequest(remote lab.RemoteProject, opts *lab.MergeReq
 
 	return err
 }
+
+func (g *Gitlab) CreateIssue(remote lab.RemoteProject, opts *lab.Issue) error {
+	client := g.getClient(remote)
+
+	options := gitlab.CreateIssueOptions{
+		Title:       &opts.Title,
+		Description: &opts.Description,
+	}
+
+	issue, _, err := client.Issues.CreateIssue(remote.Path, &options)
+	if err != nil {
+		return err
+	}
+
+	opts.URL = issue.WebURL
+
+	return err
+}

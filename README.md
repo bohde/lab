@@ -20,6 +20,18 @@ $ go install github.com/joshbohde/lab/cmd/lab
 
 ## Commands
 
+### `issue`
+
+Opens an issue in the current projec.
+
+```
+$ lab issue
+```
+
+This will open your editor so that you can fill in the title and description of the issue.
+
+Flags are available for command line scripting. To see a full list of available flags, run `lab issue --help`.
+
 ### `merge-request`
 
 Opens a merge request from the current branch to the default branch.

@@ -5,15 +5,13 @@ import (
 	"os"
 
 	"github.com/joshbohde/lab"
-	"github.com/joshbohde/lab/file"
 	"github.com/spf13/cobra"
 )
 
 var mergeRequestService = lab.MergeRequestService{
-	Git:    gitService,
-	Gitlab: gitlabService,
-	Editor: editorService,
-	Reader: &file.FileReader{},
+	Git:     gitService,
+	Gitlab:  gitlabService,
+	Message: messageService,
 }
 
 var createMergeRequestOptions = lab.CreateMergeRequestOptions{}

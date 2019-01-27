@@ -8,14 +8,14 @@ import (
 func TestParseContent(t *testing.T) {
 	cases := []struct {
 		Content  string
-		Expected MergeRequest
+		Expected Body
 	}{
-		{"Foo\nBar", MergeRequest{Title: "Foo", Description: "Bar"}},
-		{"Foo\n\n\nBar\n", MergeRequest{Title: "Foo", Description: "Bar"}},
+		{"Foo\nBar", Body{Title: "Foo", Description: "Bar"}},
+		{"Foo\n\n\nBar\n", Body{Title: "Foo", Description: "Bar"}},
 	}
 
 	for _, tc := range cases {
-		opts := MergeRequest{}
+		opts := Body{}
 		opts.ParseContent(tc.Content)
 
 		if !reflect.DeepEqual(opts, tc.Expected) {

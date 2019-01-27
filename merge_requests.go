@@ -3,28 +3,14 @@ package lab
 import (
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type MergeRequest struct {
+	Body
 	URL          string
-	Title        string
-	Description  string
 	SourceBranch string
 	TargetBranch string
 	KeepSource   bool
-}
-
-func (mr *MergeRequest) ParseContent(content string) {
-	splitContent := strings.SplitAfterN(content, "\n", 2)
-
-	if len(splitContent) >= 1 {
-		mr.Title = strings.Trim(splitContent[0], "\n")
-	}
-
-	if len(splitContent) > 1 {
-		mr.Description = strings.Trim(splitContent[1], "\n")
-	}
 }
 
 type CreateMergeRequestOptions struct {
@@ -48,10 +34,9 @@ func (opts *CreateMergeRequestOptions) MergeRequest() MergeRequest {
 }
 
 type MergeRequestService struct {
-	Git    Git
-	Gitlab Gitlab
-	Editor Editor
-	Reader FileReader
+	Git     Git
+	Gitlab  Gitlab
+	Message Message
 }
 
 func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) error {
@@ -77,21 +62,16 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 		opts.TargetBranch = project.DefaultBranch
 	}
 
-	if opts.File != "" {
-		content, err := service.Reader.Read(opts.File)
-		if err != nil {
-			return err
-		}
-		opts.Message = content
-	}
+	delete, err := service.Message.GetMessage(&opts.Message, MessageOpts{
+		Edit:      opts.Edit,
+		InputFile: opts.File,
+		EditFile:  "MERGE_REQUESTMSG",
+		Topic:     "merge request",
+		Comment:   fmt.Sprintf("Requesting a merge from %s to %s.\n\nWrite a message for this merge request. The first line is the title and the rest is the description.", opts.SourceBranch, opts.TargetBranch),
+	})
 
-	var fileEditor FileEditor
-
-	if opts.Message == "" || opts.Edit {
-		fileEditor, err = service.edit(opts)
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
 	}
 
 	mr := opts.MergeRequest()
@@ -108,31 +88,7 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 
 	fmt.Printf("%s\n", mr.URL)
 
-	if fileEditor != nil {
-		err = fileEditor.DeleteFile()
-	}
+	delete()
 
 	return err
-}
-
-func (service *MergeRequestService) edit(opts *CreateMergeRequestOptions) (FileEditor, error) {
-	fileEditor, err := service.Editor.New("MERGE_REQUESTMSG", "merge request", opts.Message)
-
-	if err != nil {
-		return fileEditor, err
-	}
-
-	commentedSection := fmt.Sprintf("Requesting a merge from %s to %s.\n\nWrite a message for this merge request. The first line is the title and the rest is the description.", opts.SourceBranch, opts.TargetBranch)
-
-	fileEditor.AddCommentedSection(commentedSection)
-	content, err := fileEditor.EditContent()
-
-	if err != nil {
-		return fileEditor, err
-	}
-
-	opts.Message = content
-
-	return fileEditor, nil
-
 }
