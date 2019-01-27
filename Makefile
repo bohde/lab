@@ -31,13 +31,11 @@ TARGETS := $(patsubst cmd/%,target/%,$(CMD_SOURCES))
 %: cmd/% **/*.go | build
 	go build -ldflags "$(LDFLAGS)" -o $@ $(GOPACKAGE)/$<
 
-target:
-	mkdir -p targets
-
-target/%: cmd/% **/*.go | targets
+target/%: cmd/% *.go **/*.go
+	mkdir -p $@
 	gox -os="linux darwin windows" -arch="amd64" -output="target/$*/$*_{{.OS}}_{{.Arch}}" -ldflags "$(LDFLAGS)" -verbose $(GOPACKAGE)/$<
 
 dist: $(TARGETS)
 
 clean:
-	rm -rf ./build
+	rm -rf ./target
