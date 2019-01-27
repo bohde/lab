@@ -88,7 +88,7 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 
 	fmt.Printf("%s\n", mr.URL)
 
-	delete()
+	err = delete()
 
 	return err
 }

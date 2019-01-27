@@ -60,7 +60,7 @@ func (service *IssueService) Create(opts *CreateIssueOptions) error {
 
 	fmt.Printf("%s\n", issue.URL)
 
-	delete()
+	err = delete()
 
 	return err
 }
