@@ -33,7 +33,7 @@ func init() {
 	rootCmd.AddCommand(mergeRequestCmd)
 
 	mergeRequestCmd.Flags().StringVar(&createMergeRequestOptions.Title, "title", "", "The title of the merge request.")
-	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.Description, "description", "d", "", "The description of the merge request. If not provided, will open an editor.")
+	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.Description, "description", "d", "", "The description of the merge request.")
 	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.SourceBranch, "source", "s", "", "The source branch. If not provided, will use your local branch.")
 	mergeRequestCmd.Flags().StringVarP(&createMergeRequestOptions.TargetBranch, "target", "t", "", "The target branch. If not provided, will use the project default.")
 
