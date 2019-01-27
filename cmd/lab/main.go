@@ -10,6 +10,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	version   string
+	buildTime string
+	builder   string
+	goversion string
+)
+
 var gitService = git.New()
 var gitlabService = gitlab.New()
 var messageService = message.New()

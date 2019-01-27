@@ -1,8 +1,7 @@
 language: go
 
 go:
-  - "1.11.x"
-  - master
+  - "1.x"
 
 env:
   - GO111MODULE=on
@@ -12,6 +11,32 @@ cache:
     - $HOME/.cache/go-build
     - $HOME/gopath/pkg/mod
 
+before_install:
+  - go get github.com/mitchellh/gox
+
 install: make dependencies
 
 script: make
+
+deploy:
+  api_key:
+    # Add your own token here. Visit https://github.com/settings/tokens/new and give it the repo permissions.
+    # Copy that token, and then use the Travis client to encrypt it (https://github.com/travis-ci/travis.rb#readme),
+    # e.g. $ travis encrypt "<key from github>"
+    # Paste the resulting encrypted value below
+    secure: "B4Cy65yfNrwdWA3dQjS/F7EgEZpJpbPVuwIvXradUCHn8xE/0WuF1E9NSf4JYVuOo8ssbUFUG7AW/zpRhIoH4xUgTgGY5Uhkyfk/K0zQAyUgISj43WLhtWAqmwUMnvbyr7kt1VGz+nVSenOhGzjpnJ6WRF6KQKjLtNEGgMneg4e9eHOBnAZ3YazMyQRbIvU8/ql7Px1TaIAvQTuaUOWPDCc59jMt8l79CyM4inMvslwZFL4nKKOR974gEwcBkIdoqLjO8EUp51rELbn/zeT5UP6k2mjtSNyk9ZAamYXvUE5OAgxFSZge274OCs7ILNllOVSLdmw1Yv6b9c1YGyMJsKcEU08DJIpGqIXoOEZAyNwII88boOAMHkInk9CYbHT1N895X9SMBUSAacv5ht20Mo538FHH5xheohS+9hwNgWFLRgYYIIpwmbaDAI9MnevoOKaXSQejNk0/e3cq5mRqBiYMTAD5WYvEXMqWqrabmqwUBJhDqPAUa0VoE+qQd7OBQrKWLj/N1XMdV+QAihFBGmpTkfX65w0HcqRO9xWKTDXoqPQnbL1JdGnrSs8O6Pl8I4tXfmS3rLMN7MKxPCbPbuFTyoGdjQ/kN9Ek/endoF9y1sLWi+1YMQNgvOS44xOsi5sNSienzTrpmsSBMx3uid9nO03iI8OYic+Q/q4v8UI="
+  file_glob: true
+  file: target/*/*
+  on:
+    tags: true
+  provider: releases
+  skip_cleanup: true
+
+notifications:
+  email: false
+
+branches:
+  only:
+  - master
+  # this is needed to release tags
+  - /^v\d+\.\d+\.\d+.*$/
