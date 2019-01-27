@@ -7,6 +7,14 @@
 
 ## Installation
 
+### Release
+
+1. Download [the latest release](https://github.com/joshbohde/lab/releases/latest) for your platform.
+2. Make it executable, e.g. `chmod +x lab_linux_amd64`
+3. Put it somewhere on your path, e.g. `mv lab_linux_amd64 /usr/local/bin/lab`
+
+### From source
+
 ```
 $ go get -u github.com/joshbohde/lab
 $ go install github.com/joshbohde/lab/cmd/lab
