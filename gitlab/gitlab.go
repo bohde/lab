@@ -35,11 +35,14 @@ func (g *Gitlab) Project(remote lab.RemoteProject) (project lab.Project, err err
 func (g *Gitlab) CreateMergeRequest(remote lab.RemoteProject, opts *lab.CreateMergeRequestOptions) (lab.MergeRequest, error) {
 	client := g.getClient(remote)
 
+	removeSource := !opts.KeepSource
+
 	options := gitlab.CreateMergeRequestOptions{
-		Title:        &opts.Title,
-		Description:  &opts.Description,
-		SourceBranch: &opts.SourceBranch,
-		TargetBranch: &opts.TargetBranch,
+		Title:              &opts.Title,
+		Description:        &opts.Description,
+		SourceBranch:       &opts.SourceBranch,
+		TargetBranch:       &opts.TargetBranch,
+		RemoveSourceBranch: &removeSource,
 	}
 
 	mr, _, err := client.MergeRequests.CreateMergeRequest(remote.Path, &options)
