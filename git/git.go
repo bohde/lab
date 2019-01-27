@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"strings"
 
-	"github.com/github/hub/git"
 	"github.com/github/hub/github"
 	"github.com/joshbohde/lab"
 )
@@ -19,7 +19,12 @@ func New() *Git {
 
 // LocalBranch returns the name of the local branch
 func (g *Git) LocalBranch() (string, error) {
-	return git.Head()
+	out, err := exec.Command("git", "symbolic-ref", "--short", "-q", "HEAD").Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSuffix(string(out), "\n"), err
+
 }
 
 // RemoteProject returns the remote Gitlab project of the local branch
@@ -52,7 +57,7 @@ func (g *Git) Get(key string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(out), err
+	return strings.TrimSuffix(string(out), "\n"), err
 }
 
 func (g *Git) Set(key, val string, global bool) error {
