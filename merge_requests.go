@@ -52,6 +52,6 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 		return err
 	}
 
-	fmt.Print(mr.URL)
+	fmt.Printf("%s\n", mr.URL)
 	return nil
 }
