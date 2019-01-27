@@ -43,6 +43,9 @@ func (g *Gitlab) CreateMergeRequest(remote lab.RemoteProject, opts *lab.CreateMe
 	}
 
 	mr, _, err := client.MergeRequests.CreateMergeRequest(remote.Path, &options)
+	if err != nil {
+		return lab.MergeRequest{}, err
+	}
 
 	ret := lab.MergeRequest{
 		URL:         mr.WebURL,
