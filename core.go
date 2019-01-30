@@ -33,3 +33,7 @@ type MessageOpts struct {
 type Message interface {
 	GetMessage(*string, MessageOpts) (func() error, error)
 }
+
+type Browser interface {
+	Open(string) error
+}

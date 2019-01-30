@@ -3,40 +3,43 @@ package lab
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"io"
 	"strings"
-
-	"github.com/skratchdot/open-golang/open"
 )
 
 type AuthService struct {
-	Git Git
+	Git     Git
+	Browser Browser
+	Reader  io.Reader
+	Writer  io.Writer
 }
 
 // AuthService will ensure the user logs in if the remote project requires it
 func (service *AuthService) RemoteProject() (RemoteProject, error) {
 	remote, err := service.Git.RemoteProject()
 
-	if missingToken, ok := err.(MissingToken); ok {
-		reader := bufio.NewReader(os.Stdin)
+	reader := bufio.NewReader(service.Reader)
 
-		fmt.Printf("No access token for https://%s/ found. Please create a new access token with api scopes.\n", missingToken.Host)
-		fmt.Println("Press enter to open your browser to your access tokens page.")
+	if missingToken, ok := err.(MissingToken); ok {
+
+		fmt.Fprintf(service.Writer, "No access token for https://%s/ found. Please create a new access token with api scopes.\n", missingToken.Host)
+		fmt.Fprintln(service.Writer, "Press enter to open your browser to your access tokens page.")
 
 		reader.ReadString('\n')
 
-		err = open.Start(fmt.Sprintf("https://%s/profile/personal_access_tokens", missingToken.Host))
+		url := fmt.Sprintf("https://%s/profile/personal_access_tokens", missingToken.Host)
+		err = service.Browser.Open(url)
 		if err != nil {
-			fmt.Printf("Error trying open personal access token page.\n")
+			fmt.Fprintf(service.Writer, "Error trying open personal access token page.\n")
 			return remote, missingToken
 		}
 
 		if err != nil {
-			fmt.Printf("Error trying to read string.\n")
+			fmt.Fprintf(service.Writer, "Error trying to read string.\n")
 			return remote, missingToken
 		}
 
-		fmt.Print("Please paste the access token here: ")
+		fmt.Fprint(service.Writer, "Please paste the access token here: ")
 
 		text, err := reader.ReadString('\n')
 

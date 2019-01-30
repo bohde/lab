@@ -3,6 +3,7 @@ package lab
 import (
 	"errors"
 	"fmt"
+	"io"
 )
 
 type Issue struct {
@@ -26,6 +27,7 @@ type IssueService struct {
 	Git     Git
 	Gitlab  Gitlab
 	Message Message
+	Writer  io.Writer
 }
 
 func (service *IssueService) Create(opts *CreateIssueOptions) error {
@@ -58,7 +60,7 @@ func (service *IssueService) Create(opts *CreateIssueOptions) error {
 		return err
 	}
 
-	fmt.Printf("%s\n", issue.URL)
+	fmt.Fprintf(service.Writer, "%s\n", issue.URL)
 
 	err = delete()
 

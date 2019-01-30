@@ -9,7 +9,10 @@ import (
 )
 
 var authService = lab.AuthService{
-	Git: gitService,
+	Git:     gitService,
+	Browser: browserService,
+	Reader:  os.Stdin,
+	Writer:  os.Stdout,
 }
 
 // mergeRequestCmd represents the mergeRequest command

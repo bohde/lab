@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joshbohde/lab/browser"
 	git "github.com/joshbohde/lab/git"
 	"github.com/joshbohde/lab/gitlab"
 	"github.com/joshbohde/lab/message"
@@ -20,6 +21,7 @@ var (
 var gitService = git.New()
 var gitlabService = gitlab.New()
 var messageService = message.New()
+var browserService = browser.New()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

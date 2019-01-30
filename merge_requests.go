@@ -3,6 +3,7 @@ package lab
 import (
 	"errors"
 	"fmt"
+	"io"
 )
 
 type MergeRequest struct {
@@ -37,6 +38,7 @@ type MergeRequestService struct {
 	Git     Git
 	Gitlab  Gitlab
 	Message Message
+	Writer  io.Writer
 }
 
 func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) error {
@@ -86,7 +88,7 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 		return err
 	}
 
-	fmt.Printf("%s\n", mr.URL)
+	fmt.Fprintf(service.Writer, "%s\n", mr.URL)
 
 	err = delete()
 
