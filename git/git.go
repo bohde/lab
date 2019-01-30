@@ -43,13 +43,20 @@ func (g *Git) RemoteProject() (lab.RemoteProject, error) {
 	authToken, err := g.Get(fmt.Sprintf("lab.%s.token", r.Host))
 
 	if err != nil || authToken == "" {
-		err = fmt.Errorf("create an access token and configure it by running `git config --global lab.%s.token <token>`", r.Host)
+		err = lab.MissingToken{
+			Host: r.Host,
+		}
 		return r, err
 	}
 
 	r.Token = authToken
 	return r, nil
 
+}
+
+func (g *Git) SetAccessToken(r lab.RemoteProject, token string) error {
+	key := fmt.Sprintf("lab.%s.token", r.Host)
+	return g.Set(key, token, true)
 }
 
 func (g *Git) Get(key string) (string, error) {

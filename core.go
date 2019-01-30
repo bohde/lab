@@ -1,8 +1,19 @@
 package lab
 
+import "fmt"
+
+type MissingToken struct {
+	Host string
+}
+
+func (m MissingToken) Error() string {
+	return fmt.Sprintf("no access token found for %s. create one by running `lab auth` in this directory.", m.Host)
+}
+
 type Git interface {
 	LocalBranch() (string, error)
 	RemoteProject() (RemoteProject, error)
+	SetAccessToken(RemoteProject, string) error
 }
 
 type Gitlab interface {
