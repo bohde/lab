@@ -12,6 +12,7 @@ var mergeRequestService = lab.MergeRequestService{
 	Git:     gitService,
 	Gitlab:  gitlabService,
 	Message: messageService,
+	Writer:  os.Stdout,
 }
 
 var createMergeRequestOptions = lab.CreateMergeRequestOptions{}

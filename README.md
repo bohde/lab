@@ -20,13 +20,17 @@ $ go get -u github.com/joshbohde/lab
 $ go install github.com/joshbohde/lab/cmd/lab
 ```
 
-## Setup
-
-1. Visit https://gitlab.com/profile/personal_access_tokens and create a new access token with API Scope
-2. Run `git config --global lab.gitlab.com.token '<token>'`
-
-
 ## Commands
+
+### `auth`
+
+Will configure access tokens for the current project, if none exist.
+
+```
+$ lab auth
+```
+
+This will open your browser to your Gitlab access tokens page, for either https://gitlab.com, or your self-hosted instance. Create a new token with API scope, and paste it back into your terminal.
 
 ### `issue`
 

@@ -12,6 +12,7 @@ var issueService = lab.IssueService{
 	Git:     gitService,
 	Gitlab:  gitlabService,
 	Message: messageService,
+	Writer:  os.Stdout,
 }
 
 var createIssueOptions = lab.CreateIssueOptions{}
