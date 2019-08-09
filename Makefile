@@ -33,7 +33,7 @@ TARGETS := $(patsubst cmd/%,target/%,$(CMD_SOURCES))
 
 target/%: cmd/% *.go **/*.go
 	mkdir -p $@
-	gox -os="linux darwin windows" -arch="amd64" -output="target/$*/$*_{{.OS}}_{{.Arch}}" -ldflags "$(LDFLAGS)" -verbose $(GOPACKAGE)/$<
+	CGO_ENABLED=0 gox -os="linux darwin windows" -arch="amd64" -output="target/$*/$*_{{.OS}}_{{.Arch}}" -ldflags "$(LDFLAGS)" -verbose $(GOPACKAGE)/$<
 
 dist: $(TARGETS)
 
