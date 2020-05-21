@@ -11,8 +11,8 @@ func TestProjectURL(t *testing.T) {
 		URL      string
 		Expected RemoteProject
 	}{
-		{"https://gitlab.com/joshbohde/lab", RemoteProject{Host: "gitlab.com", Path: "joshbohde/lab"}},
-		{"https://gitlab.com/joshbohde/lab.git", RemoteProject{Host: "gitlab.com", Path: "joshbohde/lab"}},
+		{"https://gitlab.com/joshbohde/lab", RemoteProject{Name: "origin", Host: "gitlab.com", Path: "joshbohde/lab"}},
+		{"https://gitlab.com/joshbohde/lab.git", RemoteProject{Name: "origin", Host: "gitlab.com", Path: "joshbohde/lab"}},
 	}
 
 	for _, tc := range cases {
@@ -21,7 +21,7 @@ func TestProjectURL(t *testing.T) {
 			t.Errorf("Error parsing %s: %s = ", tc.URL, err)
 		}
 
-		actual := ParseRemoteProject(*u)
+		actual := ParseRemoteProject("origin", *u)
 
 		if !reflect.DeepEqual(actual, tc.Expected) {
 			t.Errorf("ProjectUrl(%s) = %+v, expected %+vs", tc.URL, actual, tc.Expected)
