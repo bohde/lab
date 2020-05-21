@@ -11,6 +11,7 @@ import (
 var mergeRequestService = lab.MergeRequestService{
 	Git:     gitService,
 	Gitlab:  gitlabService,
+	Browser: browserService,
 	Message: messageService,
 	Writer:  os.Stdout,
 }
@@ -43,4 +44,5 @@ func init() {
 
 	mergeRequestCmd.Flags().BoolVarP(&createMergeRequestOptions.Edit, "edit", "e", false, "Edit provided message.")
 
+	mergeRequestCmd.Flags().BoolVarP(&createMergeRequestOptions.OpenInBrowser, "browse", "o", false, "Open the new merge request in your browser.")
 }

@@ -15,12 +15,13 @@ type MergeRequest struct {
 }
 
 type CreateMergeRequestOptions struct {
-	Message      string
-	File         string
-	Edit         bool
-	SourceBranch string
-	TargetBranch string
-	KeepSource   bool
+	Message       string
+	File          string
+	Edit          bool
+	SourceBranch  string
+	TargetBranch  string
+	KeepSource    bool
+	OpenInBrowser bool
 }
 
 func (opts *CreateMergeRequestOptions) MergeRequest() MergeRequest {
@@ -38,6 +39,7 @@ type MergeRequestService struct {
 	Git     Git
 	Gitlab  Gitlab
 	Message Message
+	Browser Browser
 	Writer  io.Writer
 }
 
@@ -88,7 +90,14 @@ func (service *MergeRequestService) Create(opts *CreateMergeRequestOptions) erro
 		return err
 	}
 
-	fmt.Fprintf(service.Writer, "%s\n", mr.URL)
+	if opts.OpenInBrowser {
+		err = service.Browser.Open(mr.URL)
+		if err != nil {
+			return err
+		}
+	} else {
+		fmt.Fprintf(service.Writer, "%s\n", mr.URL)
+	}
 
 	err = delete()
 
