@@ -1,4 +1,4 @@
-package lab
+package git
 
 import (
 	"errors"
@@ -38,7 +38,7 @@ func (g *Git) RemoteProject() (lab.RemoteProject, error) {
 		return lab.RemoteProject{}, errors.New("no remotes found")
 	}
 
-	r := lab.ParseRemoteProject(*remotes[0].URL)
+	r := lab.ParseRemoteProject(remotes[0].Name, *remotes[0].URL)
 
 	authToken, err := g.Get(fmt.Sprintf("lab.%s.token", r.Host))
 
@@ -52,6 +52,42 @@ func (g *Git) RemoteProject() (lab.RemoteProject, error) {
 	r.Token = authToken
 	return r, nil
 
+}
+
+// RevList returns a list of revisions between the two commits
+func (g *Git) RevList(base, merge string) ([]string, error) {
+	commitRange := fmt.Sprintf("%s...%s", base, merge)
+	out, err := exec.Command("git", "rev-list", commitRange).Output()
+	if err != nil {
+		return nil, err
+	}
+
+	revList := strings.Split(string(out), "\n")
+	if len(revList) >= 1 {
+		// trim newline, and original revision
+		revList = revList[0 : len(revList)-1]
+	}
+
+	return revList, nil
+}
+
+// CommitMessage returns the commit message for a ref
+func (g *Git) CommitMessage(commit string) (string, error) {
+	out, err := exec.Command("git", "log", "--format=%B", "-n", "1", commit).Output()
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
+}
+
+// CommitMessages returns the first commit message between two refs
+func (g *Git) CommitMessages(base, merge string) (string, error) {
+	commitRange := fmt.Sprintf("%s...%s", base, merge)
+	out, err := exec.Command("git", "log", "--pretty=format:%s", commitRange).Output()
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
 }
 
 func (g *Git) SetAccessToken(r lab.RemoteProject, token string) error {

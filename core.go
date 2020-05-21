@@ -12,6 +12,9 @@ func (m MissingToken) Error() string {
 
 type Git interface {
 	LocalBranch() (string, error)
+	RevList(string, string) ([]string, error)
+	CommitMessage(string) (string, error)
+	CommitMessages(string, string) (string, error)
 	RemoteProject() (RemoteProject, error)
 	SetAccessToken(RemoteProject, string) error
 }
